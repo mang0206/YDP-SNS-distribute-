@@ -1,0 +1,160 @@
+{% extends 'index_base.html' %}
+{% block friend %}
+<div class="base_body_margin friend">
+    <h2>친구</h2>
+</div>
+<div class="base_body_margin both_layout">
+    <div id="media_query_friend" class="both_layout_content friend_container">
+        <h3>새로운 친구 요청</h3>
+        <div class="request_status">
+            <!-- 친구 요청에 따른 페이지 구성 -->
+            {% if request_friend|length == 0 %}
+            <div class="empty_request_friend">
+                <p>새로운 친구 요청이 없습니다.</p>
+            </div>
+            {% else %}
+                {% for friend_key, friend_val in request_friend.items() %}
+                <div>
+                    <div class="friend_user_container request_friend">
+                        <a href="/user/{{friend_val['nickname']}}">
+                            <img src="{{ friend_val['profile_img'][1] }}" alt="" class="friend_user_image">
+                        </a>
+                        <a href="/user/{{friend_val['nickname']}}">
+                            <div class="friend_user_name">{{ friend_val['nickname'] }}</div>
+                        </a>
+                        <!-- js 요청 수락/거절 버튼 -->
+                        <div id="request_button" style="background-color: #EDEDED;">
+                            <button id="accept_btn" btn-data-value="{{ friend_key }}" name="accept" class="request_btn">수락</button>
+                            <button id="reject_btn" btn-data-value="{{ friend_key }}" name="reject" class="request_btn">거절</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <hr class="friend_hr" noshade="noshade">
+        <div id="friend_list">
+            <h3>친구 목록</h3>
+            <div class="user_friend" value="{{friend_list|length}}">
+                {% if friend_list|length == 0 %}
+                <span class="empty_txt">친구를 검색하고 추가해보세요!</span>
+                {% else %}
+                    {% for my_friend_key, my_friend_val in friend_list.items() %}
+                    <div name="request_friend" class="request_friend">
+                        <div class="friend_user_container ">
+                            <a href="/user/{{my_friend_val['nickname']}}">
+                                <img src="{{ my_friend_val['profile_img'][1] }}" alt="" class="friend_user_image">
+                            </a>
+                            <a href="/user/{{my_friend_val['nickname']}}">
+                                <div class="friend_user_name">{{ my_friend_val['nickname'] }}</div>
+                            </a>
+                            <!-- js 친구 삭제 버튼 -->
+                            <div id="request_button" style="background-color: #EDEDED;">
+                                <button id="delete_btn" btn-data-value="{{ my_friend_key }}" name="delete" class="request_btn">친구 삭제</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="media_query_friend_recommend">
+            <hr class="friend_hr" noshade="noshade">
+            <div class="">
+                <!-- 화면 너비 950px 일 경우 표시 -->
+                <p class="friend_recommend_header">친구 추천 목록</p>
+                <div class="recommend_container">
+                    {% for friend in recommend_frined_dic %}
+                    <div class="user_list">
+                        <a href="/user/{{recommend_frined_dic[friend]['nickname']}}">
+                            <img src="{{ recommend_frined_dic[friend]['profile_img'][1] }}" alt="" class="search_user_image">
+                        </a>
+                        <div class="user_list_name_area">
+                            <a class="user_nickname" href="/user/{{recommend_frined_dic[friend]['nickname']}}">
+                                {{ recommend_frined_dic[friend]['nickname'] }}
+                            </a>
+                            <div class="user_name">
+                                {{ recommend_frined_dic[friend]['user_name'] }}
+                            </div>
+                            {% if recommend_frined_dic[friend]['count'] != 0 %}
+                            <p class="recommended_friend">함께아는 친구 {{ recommend_frined_dic[friend]['count']|length }}</p>
+                            <!-- 함께아는 친구 popup -->
+                            <div class="more_icon_popup_back none">
+                                <div class="more_icon_popup popup_friend">
+                                    <div class="popup_friend_header" value="header">
+                                        <div>함께아는 친구 목록</div>
+                                        <img id="recommended_friend_close" class="top_bar_icon" src="../static/img/close.png" alt="close_icon" value="img">
+                                    </div>
+                                    <div class="popup_friend_container">
+                                        {% for together_friend in recommend_frined_dic[friend]['count'] %}
+                                        <div class="popup_friend_list"> 
+                                            <img src="{{together_friend['profile_img'][1] }}" class="user_profile_img">
+                                            <div class="user_list_name_area">
+                                                <p class="user_nickname">
+                                                    {{together_friend['nickname']}}
+                                                </p>
+                                                <p class="user_name">
+                                                    {{ together_friend['user_name'] }}
+                                                </p>
+                                            </div>
+                                        </div> 
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div> 
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="both_layout_friend friend_recommend">
+        <p class="friend_recommend_header">친구 추천 목록</p>
+        {% for friend in recommend_frined_dic %}
+        <div class="user_list">
+            <a href="/user/{{recommend_frined_dic[friend]['nickname']}}">
+                <img src="{{ recommend_frined_dic[friend]['profile_img'][1] }}" alt="" class="search_user_image">
+            </a>
+            <div class="user_list_name_area">
+                <a class="user_nickname" href="/user/{{recommend_frined_dic[friend]['nickname']}}">
+                    {{ recommend_frined_dic[friend]['nickname'] }}
+                </a>
+                <div class="user_name">
+                    {{ recommend_frined_dic[friend]['user_name'] }}
+                </div>
+                {% if recommend_frined_dic[friend]['count'] != 0 %}
+                <p class="recommended_friend">함께아는 친구 {{ recommend_frined_dic[friend]['count']|length }}</p>
+                <!-- 함께아는 친구 popup -->
+                <div class="more_icon_popup_back none">
+                    <div class="more_icon_popup popup_friend">
+                        <div class="popup_friend_header" value="header">
+                            <div>함께아는 친구 목록</div>
+                            <img id="recommended_friend_close" class="top_bar_icon" src="../static/img/close.png" alt="close_icon" value="img">
+                        </div>
+                        <div style="overflow: auto;">
+                            {% for together_friend in recommend_frined_dic[friend]['count'] %}
+                            <div class="popup_friend_list"> 
+                                <img src="{{together_friend['profile_img'][1] }}" class="user_profile_img">
+                                <div class="user_list_name_area">
+                                    <p class="user_nickname">
+                                        {{together_friend['nickname']}}
+                                    </p>
+                                    <p class="user_name">
+                                        {{together_friend['user_name'] }}
+                                    </p>
+                                </div>
+                            </div> 
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div> 
+        {% endfor %}
+    </div>
+</div>
+<script src="../static/js/friend.js" defer="defer"></script>
+{% endblock %}
