@@ -41,7 +41,7 @@ pipeline {
             // Jenkins에서 pull한 파일을 /home/ubuntu 경로에 app 이름으로 복사
             dir (''){
                 sh """
-                cp -r /var/lib/jenkins/workspace/sns_project@2 /home/MJ/app
+                cp -r /var/lib/jenkins/workspace/sns_project@2 /home/MJ/app/flask
                 """
             }
           }
@@ -50,6 +50,29 @@ pipeline {
             // 작업 실패 시 pipe line을 종료한다.
             failure {
               error 'This pipeline stops here...'
+            }
+          }
+        }
+        stage('Deploy Backend') {
+          agent any
+
+          steps {
+            echo 'Build Backend'
+            // 만약 처음 시작이 아니라면 docker run 전에 docker rm -f $(docker ps -aq) 이 코드 필요  
+            dir ('/home/MJ/app'){
+                sh '''
+                docker rm -f flask && doker rm -f nginx
+                docker-compose up -d
+                '''
+            }
+          }
+
+          post {
+            success {
+              mail  to: 'frontalnh@gmail.com',
+                    subject: "Deploy Success",
+                    body: "Successfully deployed!"
+                  
             }
           }
         }
